@@ -1,0 +1,10 @@
+pipeline{
+	node{
+		agent any
+		stages{
+			stage("Discription"){
+				echo "First Pipeline to write for practicing."
+			}
+		}
+	}
+}
