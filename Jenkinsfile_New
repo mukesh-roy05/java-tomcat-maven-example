@@ -1,6 +1,4 @@
-pipeline{
- agent any
-    stages{
+node {
    def mvnHome,jdk
    echo "Defile jdk and mvnHome"
    stage('Preparation') { // for display purposes
@@ -30,5 +28,4 @@ pipeline{
    stage("Deploy"){
        deploy adapters: [tomcat8(credentialsId: 'f6d3b4cf-7fa0-4478-80bd-a3d1f8ad1417', path: '', url: 'http://localhost:8090')], contextPath: null, onFailure: false, war: 'target/*.war'
    }
- }
 }
