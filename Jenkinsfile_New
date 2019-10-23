@@ -1,0 +1,31 @@
+node {
+   def mvnHome,jdk
+   echo "Defile jdk and mvnHome"
+   stage('Preparation') { // for display purposes
+      // Get some code from a GitHub repository
+      git credentialsId: '706e8ba5-3c28-4ada-ae60-5de369f37499', url: 'https://github.com/mukesh-roy05/java-tomcat-maven-example.git'
+      // Get the Maven tool.
+      // ** NOTE: This 'M3' Maven tool must be configured
+      // **       in the global configuration.           
+      mvnHome = tool 'apache-maven-3.6.2-bin'
+      jdk = tool name: 'jdk8'
+      env.JAVA_HOME = "${jdk}"
+   }
+   stage('Build') {
+      // Run the maven build
+      withEnv(["MVN_HOME=$mvnHome"]) {
+         if (isUnix()) {
+            sh '"$MVN_HOME/bin/mvn" -Dmaven.test.failure.ignore clean package'
+         } else {
+            bat(/"%MVN_HOME%\bin\mvn" -Dmaven.test.failure.ignore clean package/)
+         }
+      }
+   }
+   stage('Results') {
+      //junit '**/target/surefire-reports/TEST-*.xml'
+      archiveArtifacts 'target/*.war'
+   }
+   stage("Deploy"){
+       deploy adapters: [tomcat8(credentialsId: 'f6d3b4cf-7fa0-4478-80bd-a3d1f8ad1417', path: '', url: 'http://localhost:8090')], contextPath: null, onFailure: false, war: 'target/*.war'
+   }
+}
