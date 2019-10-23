@@ -1,5 +1,5 @@
 pipeline{
-node {
+stages {
    def mvnHome,jdk
    echo "Defile jdk and mvnHome"
    stage('Preparation') { // for display purposes
